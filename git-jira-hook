@@ -232,8 +232,10 @@ def handle_post_receive():
     return 0
         
 
-
 def validate_commit_text(jira_soap_client, jira_auth, commit_text, commit_id=None):
+    if bypass_validation(commit_text):
+        return 0
+    
     refed_issue_count = call_pattern_hook(commit_text, "refs", \
             jira_find_issue, jira_soap_client, jira_auth, None)
 
@@ -256,6 +258,9 @@ def validate_commit_text(jira_soap_client, jira_auth, commit_text, commit_id=Non
 
     return 0
 
+def bypass_validation(commit_text):
+    # check if we are receiving a release commit
+    return false
 
 def jira_add_comment(jira_soap_client, jira_auth, commit_id, commit_text):
     gitweb_url = get_gitweb_url()
